@@ -1,6 +1,8 @@
 import os
 import MySQLdb
 import json
+from random import randint
+
 from google.appengine.ext import endpoints
 
 from protorpc import messages
@@ -18,6 +20,12 @@ STORED_GREETINGS = GreetingCollection(items=[
     Greeting(message='Hello World!'),
     Greeting(message='Goodbye Cruel World!'),
 ])
+
+class ReturnJSON(messages.Message):
+    msg = messages.StringField(1)
+
+def rand():
+    return randint(1, 1000)
 
 env = os.getenv('SERVER_SOFTWARE')
 if env and env.startswith('Google App Engine/') or os.getenv('SETTINGS_MODE') == 'prod':
@@ -90,6 +98,69 @@ class GAE_Endpoints_API(remote.Service):
         email = (current_user.email() if current_user is not None else 'Anonymous')
         return Greeting(message='Hello %s' % (email,))
 
+    @endpoints.method(message_types.VoidMessage, ReturnJSON,
+                      path='fake_data', http_method='GET',
+                      name='fake.data')
+    def fake_data(self, request):
+        data = {'test': "Hello world"}
+        ret = ReturnJSON(msg=json.dumps(data))
+        return ret
+
+    @endpoints.method(message_types.VoidMessage, ReturnJSON,
+                      path='rand_int', http_method='GET',
+                      name='rand.int')
+    def fake_random_data(self, request):
+        data = {'int': rand()}
+        ret = ReturnJSON(msg=json.dumps(data))
+        return ret
+
+    @endpoints.method(message_types.VoidMessage, ReturnJSON,
+                      path='fake_treegraph_data', http_method='GET',
+                      name='fake.treegraph.data')
+    def fake_treegraph_data(self, request):
+        data = {
+            "children": [
+            {
+            "name": "Project",
+            "children": [
+                  {"name": "BLCA-US", "size": 3938},
+              {"name": "BLCA-CN", "size": 3812},
+              {"name": "BOCA-UK", "size": 6714},
+              {"name": "GBM-US", "size": 743}
+               ]
+            },
+            {
+            "name": "Primary Site",
+            "children": [
+                {"name": "Brain", "size": 17010},
+                {"name": "Breast", "size": 5842},
+                {"name": "Blood", "size": 1983},
+                {"name": "Lung", "size": 2047},
+                {"name": "Head and Neck", "size": 1375},
+                {"name": "Kidney", "size": 2202},
+                {"name": "Liver", "size": 1382}
+            ]
+            },
+            {
+            "name": "Gender",
+            "children": [
+              {"name": "Male", "size": 4721},
+              {"name": "Female", "size": 4294}
+             ]
+            },
+
+            {
+            "name": "Tumor Stage",
+            "children": [
+            {"name": "No Data", "size": 8833},
+            {"name": "Others", "size": 1732},
+            {"name": "4", "size": 3623},
+            {"name": "A", "size": 10066}
+            ]
+            }
+            ]}
+        ret = ReturnJSON(msg=json.dumps(data))
+        return ret
 
 
 APPLICATION = endpoints.api_server([GAE_Endpoints_API])
