@@ -16,3 +16,4 @@ Endpoints:
 - /fmdata : returns all sample feature matrix data that was given to us (10054 samples).
 - /fmdata?{parameter}={value} : returns a filtered list of feature matrix data where the parameter=value for each record. If multiple parameters are given, they will be ANDed together.
 - /fmdata/{sample_id} : given a sample id (e.g. TCGA-OR-A5J1-01), returns all feature matrix data we have for it.
+- /fmdata_attr : returns a json object where the value for each key (attribute) is a string of a list of unique values in the database for that attribute.
