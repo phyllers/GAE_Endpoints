@@ -75,7 +75,7 @@ class FMItem(messages.Message):
     race                                 = messages.StringField(34)
     days_to_last_followup                = messages.StringField(35)
     ethnicity                            = messages.StringField(36)
-    P53                                  = messages.StringField(37)
+    TP53                                 = messages.StringField(37)
     RB1                                  = messages.StringField(38)
     NF1                                  = messages.StringField(39)
     APC                                  = messages.StringField(40)
@@ -99,6 +99,68 @@ class FMItem(messages.Message):
 
 class FMItemList(messages.Message):
     items = messages.MessageField(FMItem, 1, repeated=True)
+
+class FMAttrValue(messages.Message):
+    value = messages.StringField(1)
+
+class FMAttrList(messages.Message):
+    sample                               = messages.MessageField(FMAttrValue, 1, repeated=True)
+    percent_lymphocyte_infiltration      = messages.MessageField(FMAttrValue, 2, repeated=True)
+    percent_monocyte_infiltration        = messages.MessageField(FMAttrValue, 3, repeated=True)
+    percent_necrosis                     = messages.MessageField(FMAttrValue, 4, repeated=True)
+    percent_neutrophil_infiltration      = messages.MessageField(FMAttrValue, 5, repeated=True)
+    percent_normal_cells                 = messages.MessageField(FMAttrValue, 6, repeated=True)
+    percent_stromal_cells                = messages.MessageField(FMAttrValue, 7, repeated=True)
+    percent_tumor_cells                  = messages.MessageField(FMAttrValue, 8, repeated=True)
+    percent_tumor_nuclei                 = messages.MessageField(FMAttrValue, 9, repeated=True)
+    gender                               = messages.MessageField(FMAttrValue, 10, repeated=True)
+    history_of_neoadjuvant_treatment     = messages.MessageField(FMAttrValue, 11, repeated=True)
+    icd_o_3_histology                    = messages.MessageField(FMAttrValue, 12, repeated=True)
+    prior_dx                             = messages.MessageField(FMAttrValue, 13, repeated=True)
+    vital_status                         = messages.MessageField(FMAttrValue, 14, repeated=True)
+    country                              = messages.MessageField(FMAttrValue, 15, repeated=True)
+    disease_code                         = messages.MessageField(FMAttrValue, 16, repeated=True)
+    histological_type                    = messages.MessageField(FMAttrValue, 17, repeated=True)
+    icd_10                               = messages.MessageField(FMAttrValue, 18, repeated=True)
+    icd_o_3_site                         = messages.MessageField(FMAttrValue, 19, repeated=True)
+    tumor_tissue_site                    = messages.MessageField(FMAttrValue, 20, repeated=True)
+    tumor_type                           = messages.MessageField(FMAttrValue, 21, repeated=True)
+    age_at_initial_pathologic_diagnosis  = messages.MessageField(FMAttrValue, 22, repeated=True)
+    days_to_birth                        = messages.MessageField(FMAttrValue, 23, repeated=True)
+    days_to_initial_pathologic_diagnosis = messages.MessageField(FMAttrValue, 24, repeated=True)
+    year_of_initial_pathologic_diagnosis = messages.MessageField(FMAttrValue, 25, repeated=True)
+    days_to_last_known_alive             = messages.MessageField(FMAttrValue, 26, repeated=True)
+    tumor_necrosis_percent               = messages.MessageField(FMAttrValue, 27, repeated=True)
+    tumor_nuclei_percent                 = messages.MessageField(FMAttrValue, 28, repeated=True)
+    tumor_weight                         = messages.MessageField(FMAttrValue, 29, repeated=True)
+    person_neoplasm_cancer_status        = messages.MessageField(FMAttrValue, 30, repeated=True)
+    pathologic_N                         = messages.MessageField(FMAttrValue, 31, repeated=True)
+    radiation_therapy                    = messages.MessageField(FMAttrValue, 32, repeated=True)
+    pathologic_T                         = messages.MessageField(FMAttrValue, 33, repeated=True)
+    race                                 = messages.MessageField(FMAttrValue, 34, repeated=True)
+    days_to_last_followup                = messages.MessageField(FMAttrValue, 35, repeated=True)
+    ethnicity                            = messages.MessageField(FMAttrValue, 36, repeated=True)
+    TP53                                 = messages.MessageField(FMAttrValue, 37, repeated=True)
+    RB1                                  = messages.MessageField(FMAttrValue, 38, repeated=True)
+    NF1                                  = messages.MessageField(FMAttrValue, 39, repeated=True)
+    APC                                  = messages.MessageField(FMAttrValue, 40, repeated=True)
+    CTNNB1                               = messages.MessageField(FMAttrValue, 41, repeated=True)
+    PIK3CA                               = messages.MessageField(FMAttrValue, 42, repeated=True)
+    PTEN                                 = messages.MessageField(FMAttrValue, 43, repeated=True)
+    FBXW7                                = messages.MessageField(FMAttrValue, 44, repeated=True)
+    NRAS                                 = messages.MessageField(FMAttrValue, 45, repeated=True)
+    ARID1A                               = messages.MessageField(FMAttrValue, 46, repeated=True)
+    CDKN2A                               = messages.MessageField(FMAttrValue, 47, repeated=True)
+    SMAD4                                = messages.MessageField(FMAttrValue, 48, repeated=True)
+    BRAF                                 = messages.MessageField(FMAttrValue, 49, repeated=True)
+    NFE2L2                               = messages.MessageField(FMAttrValue, 50, repeated=True)
+    IDH1                                 = messages.MessageField(FMAttrValue, 51, repeated=True)
+    PIK3R1                               = messages.MessageField(FMAttrValue, 52, repeated=True)
+    HRAS                                 = messages.MessageField(FMAttrValue, 53, repeated=True)
+    EGFR                                 = messages.MessageField(FMAttrValue, 54, repeated=True)
+    BAP1                                 = messages.MessageField(FMAttrValue, 55, repeated=True)
+    KRAS                                 = messages.MessageField(FMAttrValue, 56, repeated=True)
+    sampleType                           = messages.MessageField(FMAttrValue, 57, repeated=True)
 
 
 @endpoints.api(name='gae_endpoints', version='v1',)
@@ -216,7 +278,7 @@ class GAE_Endpoints_API(remote.Service):
                             race                                 = str(row[33]),
                             days_to_last_followup                = str(row[34]),
                             ethnicity                            = str(row[35]),
-                            P53                                  = str(row[36]),
+                            TP53                                 = str(row[36]),
                             RB1                                  = str(row[37]),
                             NF1                                  = str(row[38]),
                             APC                                  = str(row[39]),
@@ -246,7 +308,7 @@ class GAE_Endpoints_API(remote.Service):
         tester=messages.StringField(2))
     @endpoints.method(GET_RESOURCE, FMItemList,
                       path='fmdata', http_method='GET',
-                      name='fmdata.fmdata')
+                      name='fmdata.getFmdata')
     def fmdata_list(self, request):
 
         query_dict = {}
@@ -311,7 +373,7 @@ class GAE_Endpoints_API(remote.Service):
                                     race                                 = str(row[33]),
                                     days_to_last_followup                = str(row[34]),
                                     ethnicity                            = str(row[35]),
-                                    P53                                  = str(row[36]),
+                                    TP53                                 = str(row[36]),
                                     RB1                                  = str(row[37]),
                                     NF1                                  = str(row[38]),
                                     APC                                  = str(row[39]),
@@ -337,4 +399,88 @@ class GAE_Endpoints_API(remote.Service):
         except (IndexError, TypeError):
             raise endpoints.NotFoundException('Sample %s not found.' % (request.id,))
 
+    ID_RESOURCE = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        id=messages.StringField(1))
+    @endpoints.method(ID_RESOURCE, FMItem,
+                      path='fmdata_attr', http_method='GET',
+                      name='fmdata.getFmdata_attr')
+    def fmdata_get(self, request):
+        key_list = []
+
+        for key, value in FMItem.__dict__.items():
+            if not key.startswith('_'):
+                key_list.append(key)
+
+        try:
+            cursor = db.cursor()
+            value_list = {}
+            for key in key_list:
+                query_str = 'SELECT DISTINCT %s FROM fmdata;' % key
+                print query_str
+                cursor.execute(query_str)
+
+                value_list[key] = []
+                for row in cursor.fetchall():
+                    value_list[key].append(row[0])
+            return FMItem(  sample                               = str(value_list['sample']),
+                            percent_lymphocyte_infiltration      = str(value_list['percent_lymphocyte_infiltration']),
+                            percent_monocyte_infiltration        = str(value_list['percent_monocyte_infiltration']),
+                            percent_necrosis                     = str(value_list['percent_necrosis']),
+                            percent_neutrophil_infiltration      = str(value_list['percent_neutrophil_infiltration']),
+                            percent_normal_cells                 = str(value_list['percent_normal_cells']),
+                            percent_stromal_cells                = str(value_list['percent_stromal_cells']),
+                            percent_tumor_cells                  = str(value_list['percent_tumor_cells']),
+                            percent_tumor_nuclei                 = str(value_list['percent_tumor_nuclei']),
+                            gender                               = str(value_list['gender']),
+                            history_of_neoadjuvant_treatment     = str(value_list['history_of_neoadjuvant_treatment']),
+                            icd_o_3_histology                    = str(value_list['icd_o_3_histology']),
+                            prior_dx                             = str(value_list['prior_dx']),
+                            vital_status                         = str(value_list['vital_status']),
+                            country                              = str(value_list['country']),
+                            disease_code                         = str(value_list['disease_code']),
+                            histological_type                    = str(value_list['histological_type']),
+                            icd_10                               = str(value_list['icd_10']),
+                            icd_o_3_site                         = str(value_list['icd_o_3_site']),
+                            tumor_tissue_site                    = str(value_list['tumor_tissue_site']),
+                            tumor_type                           = str(value_list['tumor_type']),
+                            age_at_initial_pathologic_diagnosis  = str(value_list['age_at_initial_pathologic_diagnosis']),
+                            days_to_birth                        = str(value_list['days_to_birth']),
+                            days_to_initial_pathologic_diagnosis = str(value_list['days_to_initial_pathologic_diagnosis']),
+                            year_of_initial_pathologic_diagnosis = str(value_list['year_of_initial_pathologic_diagnosis']),
+                            days_to_last_known_alive             = str(value_list['days_to_last_known_alive']),
+                            tumor_necrosis_percent               = str(value_list['tumor_necrosis_percent']),
+                            tumor_nuclei_percent                 = str(value_list['tumor_nuclei_percent']),
+                            tumor_weight                         = str(value_list['tumor_weight']),
+                            person_neoplasm_cancer_status        = str(value_list['person_neoplasm_cancer_status']),
+                            pathologic_N                         = str(value_list['pathologic_N']),
+                            radiation_therapy                    = str(value_list['radiation_therapy']),
+                            pathologic_T                         = str(value_list['pathologic_T']),
+                            race                                 = str(value_list['race']),
+                            days_to_last_followup                = str(value_list['days_to_last_followup']),
+                            ethnicity                            = str(value_list['ethnicity']),
+                            TP53                                 = str(value_list['TP53']),
+                            RB1                                  = str(value_list['RB1']),
+                            NF1                                  = str(value_list['NF1']),
+                            APC                                  = str(value_list['APC']),
+                            CTNNB1                               = str(value_list['CTNNB1']),
+                            PIK3CA                               = str(value_list['PIK3CA']),
+                            PTEN                                 = str(value_list['PTEN']),
+                            FBXW7                                = str(value_list['FBXW7']),
+                            NRAS                                 = str(value_list['NRAS']),
+                            ARID1A                               = str(value_list['ARID1A']),
+                            CDKN2A                               = str(value_list['CDKN2A']),
+                            SMAD4                                = str(value_list['SMAD4']),
+                            BRAF                                 = str(value_list['BRAF']),
+                            NFE2L2                               = str(value_list['NFE2L2']),
+                            IDH1                                 = str(value_list['IDH1']),
+                            PIK3R1                               = str(value_list['PIK3R1']),
+                            HRAS                                 = str(value_list['HRAS']),
+                            EGFR                                 = str(value_list['EGFR']),
+                            BAP1                                 = str(value_list['BAP1']),
+                            KRAS                                 = str(value_list['KRAS']),
+                            sampleType                           = str(value_list['sampleType']),
+                            )
+        except (IndexError, TypeError):
+            raise endpoints.NotFoundException('Error computing attributes.')
 APPLICATION = endpoints.api_server([GAE_Endpoints_API])
