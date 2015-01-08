@@ -312,15 +312,18 @@ class GAE_Endpoints_API(remote.Service):
                 if request.__getattribute__(key) != None:
                     query_dict[key] = request.__getattribute__(key)
 
-        query_str = 'SELECT * FROM fmdata where'
+        if len(query_dict) == 0:
+            query_str = 'SELECT * FROM fmdata'
+        else:
+            query_str = 'SELECT * FROM fmdata where'
 
-        first = True
-        for key, value in query_dict.items():
-            if first:
-                first = False
-                query_str += ' %s="%s"' % (key, value)
-            else:
-                query_str += ' and %s="%s"' % (key, value)
+            first = True
+            for key, value in query_dict.items():
+                if first:
+                    first = False
+                    query_str += ' %s="%s"' % (key, value)
+                else:
+                    query_str += ' and %s="%s"' % (key, value)
 
         try:
 
