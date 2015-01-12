@@ -38,6 +38,14 @@ class DBItem(messages.Message):
 class DBItemList(messages.Message):
     items = messages.MessageField(DBItem, 1, repeated=True)
 
+class FMAttr(messages.Message):
+    attribute = messages.StringField(1)
+    code = messages.StringField(2)
+    spec = messages.StringField(3)
+
+class FMAttrList(messages.Message):
+    items = messages.MessageField(FMAttr, 1, repeated=True)
+
 class FMItem(messages.Message):
     sample                               = messages.StringField(1)
     percent_lymphocyte_infiltration      = messages.StringField(2)
@@ -113,7 +121,7 @@ class ValueListCount(messages.Message):
     value = messages.StringField(1)
     count = messages.IntegerField(2)
 
-class FMAttrList(messages.Message):
+class FMAttrValuesList(messages.Message):
     # sample                               = messages.MessageField(ValueListCount, 1, repeated=True)
     percent_lymphocyte_infiltration      = messages.MessageField(ValueListCount, 2, repeated=True)
     percent_monocyte_infiltration        = messages.MessageField(ValueListCount, 3, repeated=True)
@@ -179,7 +187,7 @@ class FMAttrList(messages.Message):
     rppaPlatform                         = messages.MessageField(ValueListCount, 63, repeated=True)
 
 class FMSampleData(messages.Message):
-    attribute_list = messages.MessageField(FMAttrList, 1)
+    attribute_list = messages.MessageField(FMAttrValuesList, 1)
     total_samples = messages.IntegerField(2)
 
 @endpoints.api(name='gae_endpoints', version='v1',)
@@ -249,6 +257,48 @@ class GAE_Endpoints_API(remote.Service):
             ]}
         ret = ReturnJSON(msg=json.dumps(data))
         return ret
+
+    GET_RESOURCE = endpoints.ResourceContainer(
+        FMAttr)
+    @endpoints.method(GET_RESOURCE, FMAttrList,
+                      path='fmattr', http_method='GET',
+                      name='fmdata.getFMAttrList')
+    def fmattr_list(self, request):
+
+        query_dict = {}
+
+        for key, value in FMAttr.__dict__.items():
+            if not key.startswith('_'):
+                if request.__getattribute__(key) != None:
+                    query_dict[key] = request.__getattribute__(key)
+
+        if len(query_dict) == 0:
+            query_str = 'SELECT * FROM fmdata_attr'
+        else:
+            query_str = 'SELECT * FROM fmdata_attr where'
+
+            first = True
+            for key, value in query_dict.items():
+                if first:
+                    first = False
+                    query_str += ' %s="%s"' % (key, value)
+                else:
+                    query_str += ' and %s="%s"' % (key, value)
+
+        try:
+
+            cursor = db.cursor()
+            cursor.execute(query_str)
+            data = []
+            for row in cursor.fetchall():
+                print row
+                data.append(FMAttr(attribute=str(row[0]),
+                                   code=str(row[1]),
+                                   spec=str(row[2]),
+                                   ))
+            return FMAttrList(items=data)
+        except (IndexError, TypeError):
+            raise endpoints.NotFoundException('Sample %s not found.' % (request.id,))
 
     ID_RESOURCE = endpoints.ResourceContainer(
         message_types.VoidMessage,
@@ -468,7 +518,7 @@ class GAE_Endpoints_API(remote.Service):
                     elif row[0] is not None:
                         value_list[key].append(ValueListCount(value=str(row[0]), count=row[1]))
 
-            attr_list = FMAttrList(
+            attr_list = FMAttrValuesList(
                 # sample                               = value_list['sample'],
                                 percent_lymphocyte_infiltration      = value_list['percent_lymphocyte_infiltration'],
                                 percent_monocyte_infiltration        = value_list['percent_monocyte_infiltration'],
