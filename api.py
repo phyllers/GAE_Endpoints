@@ -302,7 +302,6 @@ class GAE_Endpoints_API(remote.Service):
             cursor.execute(query_str)
             data = []
             for row in cursor.fetchall():
-                print row
                 data.append(FMAttr(attribute=str(row[0]),
                                    code=str(row[1]),
                                    spec=str(row[2]),
