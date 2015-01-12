@@ -18,3 +18,4 @@ Endpoints:
 - /fmdata/{sample_id} : given a sample id (e.g. TCGA-OR-A5J1-01), returns all feature matrix data we have for it.
 - /fmdata_attr : returns a json object where the value for each key (attribute) is a string of a list of unique values in the database for that attribute.
 - /fmattr: returns a json object of all attribute information that was embedded in the original feature names (i.e. C:CLIN:country:::::)
+- /fmlanding?databy={datatype/diseasetype}: returns a json object by data type OR disease type depending on what's specified.

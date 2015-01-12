@@ -190,6 +190,17 @@ class FMSampleData(messages.Message):
     attribute_list = messages.MessageField(FMAttrValuesList, 1)
     total_samples = messages.IntegerField(2)
 
+class FMLandingData(messages.Message):
+    name = messages.StringField(1)
+    count = messages.IntegerField(2)
+
+class FMLandingGroup(messages.Message):
+    name = messages.StringField(1)
+    items = messages.MessageField(FMLandingData, 2, repeated=True)
+
+class FMLandingDataList(messages.Message):
+    items = messages.MessageField(FMLandingGroup, 1, repeated=True)
+
 @endpoints.api(name='gae_endpoints', version='v1',)
 class GAE_Endpoints_API(remote.Service):
 
@@ -586,4 +597,67 @@ class GAE_Endpoints_API(remote.Service):
             return FMSampleData(attribute_list=attr_list, total_samples=total_samples)
         except (IndexError, TypeError):
             raise endpoints.NotFoundException('Error computing attributes.')
+
+    GET_RESOURCE = endpoints.ResourceContainer(
+        databy=messages.StringField(1))
+    @endpoints.method(GET_RESOURCE, FMLandingDataList,
+                      path='fmlanding', http_method='GET',
+                      name='fmdata.getFMLandingData')
+    def fmattr_list(self, request):
+        databy = request.databy
+        data_types = ['DNAseq_data',
+                          'mirnPlatform',
+                          'cnvrPlatform',
+                          'methPlatform',
+                          'gexpPlatform',
+                          'rppaPlatform']
+        query_dict = {}
+        if databy == 'datatype':
+
+
+
+            try:
+                data_list = []
+                for data_type in data_types:
+                    if data_type == 'DNAseq_data':
+                        query_str = 'select disease_code,count(*) from fmdata where DNAseq_data="Yes" group by disease_code;'
+                    else:
+                        query_str = 'select disease_code,count(*) from fmdata where %s is not null group by disease_code;' % data_type
+                    cursor = db.cursor()
+                    cursor.execute(query_str)
+                    data = []
+                    for row in cursor.fetchall():
+                        data.append(FMLandingData(name=str(row[0]),
+                                           count=int(row[1])
+                                           ))
+                    data_list.append(FMLandingGroup(name=data_type, items=data))
+                return FMLandingDataList(items=data_list)
+            except (IndexError, TypeError):
+                raise endpoints.NotFoundException('Landing Data Not found.')
+        elif databy == 'diseasetype':
+            try:
+                disease_types = []
+                query_str = 'SELECT DISTINCT disease_code from fmdata'
+                cursor = db.cursor()
+                cursor.execute(query_str)
+
+                for row in cursor.fetchall():
+                    disease_types.append(row[0])
+
+                data_list = []
+                for disease in disease_types:
+                    data = []
+                    for data_type in data_types:
+                        if data_type == 'DNAseq_data':
+                            query_str = 'select count(*) from fmdata where DNAseq_data="Yes" and disease_code="%s";' % disease
+                        else:
+                            query_str = 'select count(*) from fmdata where %s is not null and disease_code="%s";' % (data_type, disease)
+                        cursor.execute(query_str)
+                        data.append(FMLandingData(name=data_type,
+                                                  count=cursor.fetchone()[0]))
+                    data_list.append(FMLandingGroup(name=disease, items=data))
+                return FMLandingDataList(items=data_list)
+            except (IndexError, TypeError):
+                raise endpoints.NotFoundException('Landing Data Not found.')
+
 APPLICATION = endpoints.api_server([GAE_Endpoints_API])
