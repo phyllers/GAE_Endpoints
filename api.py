@@ -525,7 +525,7 @@ class GAE_Endpoints_API(remote.Service):
                     count += row[1]
                     if type(row[0]) == long:
                         value_list[key].append(ValueListCount(value=str(int(row[0])), count=row[1]))
-                    elif row[0] is not None:
+                    else:
                         value_list[key].append(ValueListCount(value=str(row[0]), count=row[1]))
 
             attr_list = FMAttrValuesList(
