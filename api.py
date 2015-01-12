@@ -602,7 +602,7 @@ class GAE_Endpoints_API(remote.Service):
     @endpoints.method(GET_RESOURCE, FMLandingDataList,
                       path='fmlanding', http_method='GET',
                       name='fmdata.getFMLandingData')
-    def fmattr_list(self, request):
+    def landing_list(self, request):
         databy = request.databy
         data_types = ['DNAseq_data',
                           'mirnPlatform',
