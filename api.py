@@ -96,6 +96,12 @@ class FMItem(messages.Message):
     BAP1                                 = messages.StringField(55)
     KRAS                                 = messages.StringField(56)
     sampleType                           = messages.StringField(57)
+    DNAseq_data                          = messages.StringField(58)
+    mirnPlatform                         = messages.StringField(59)
+    cnvrPlatform                         = messages.StringField(60)
+    methPlatform                         = messages.StringField(61)
+    gexpPlatform                         = messages.StringField(62)
+    rppaPlatform                         = messages.StringField(63)
 
 class FMItemList(messages.Message):
     items = messages.MessageField(FMItem, 1, repeated=True)
@@ -108,7 +114,7 @@ class ValueListCount(messages.Message):
     count = messages.IntegerField(2)
 
 class FMAttrList(messages.Message):
-    sample                               = messages.MessageField(ValueListCount, 1, repeated=True)
+    # sample                               = messages.MessageField(ValueListCount, 1, repeated=True)
     percent_lymphocyte_infiltration      = messages.MessageField(ValueListCount, 2, repeated=True)
     percent_monocyte_infiltration        = messages.MessageField(ValueListCount, 3, repeated=True)
     percent_necrosis                     = messages.MessageField(ValueListCount, 4, repeated=True)
@@ -165,6 +171,12 @@ class FMAttrList(messages.Message):
     BAP1                                 = messages.MessageField(ValueListCount, 55, repeated=True)
     KRAS                                 = messages.MessageField(ValueListCount, 56, repeated=True)
     sampleType                           = messages.MessageField(ValueListCount, 57, repeated=True)
+    DNAseq_data                          = messages.MessageField(ValueListCount, 58, repeated=True)
+    mirnPlatform                         = messages.MessageField(ValueListCount, 59, repeated=True)
+    cnvrPlatform                         = messages.MessageField(ValueListCount, 60, repeated=True)
+    methPlatform                         = messages.MessageField(ValueListCount, 61, repeated=True)
+    gexpPlatform                         = messages.MessageField(ValueListCount, 62, repeated=True)
+    rppaPlatform                         = messages.MessageField(ValueListCount, 63, repeated=True)
 
 class FMSampleData(messages.Message):
     attribute_list = messages.MessageField(FMAttrList, 1)
@@ -306,6 +318,12 @@ class GAE_Endpoints_API(remote.Service):
                             BAP1                                 = str(row[54]),
                             KRAS                                 = str(row[55]),
                             sampleType                           = str(row[56]),
+                            DNAseq_data                          = str(row[57]),
+                            mirnPlatform                         = str(row[58]),
+                            cnvrPlatform                         = str(row[59]),
+                            methPlatform                         = str(row[60]),
+                            gexpPlatform                         = str(row[61]),
+                            rppaPlatform                         = str(row[62]),
                             )
         except (IndexError, TypeError):
             raise endpoints.NotFoundException('Sample %s not found.' % (request.id,))
@@ -315,7 +333,7 @@ class GAE_Endpoints_API(remote.Service):
         tester=messages.StringField(2))
     @endpoints.method(GET_RESOURCE, FMItemList,
                       path='fmdata', http_method='GET',
-                      name='fmdata.getFmdata')
+                      name='fmdata.getFmdataList')
     def fmdata_list(self, request):
 
         query_dict = {}
@@ -400,11 +418,22 @@ class GAE_Endpoints_API(remote.Service):
                                     EGFR                                 = str(row[53]),
                                     BAP1                                 = str(row[54]),
                                     KRAS                                 = str(row[55]),
-                                    sampleType                           = str(row[56])
+                                    sampleType                           = str(row[56]),
+                                    DNAseq_data                          = str(row[57]),
+                                    mirnPlatform                         = str(row[58]),
+                                    cnvrPlatform                         = str(row[59]),
+                                    methPlatform                         = str(row[60]),
+                                    gexpPlatform                         = str(row[61]),
+                                    rppaPlatform                         = str(row[62]),
                                     ))
             return FMItemList(items=data)
         except (IndexError, TypeError):
             raise endpoints.NotFoundException('Sample %s not found.' % (request.id,))
+
+
+
+
+
 
     ID_RESOURCE = endpoints.ResourceContainer(
         message_types.VoidMessage,
@@ -416,7 +445,7 @@ class GAE_Endpoints_API(remote.Service):
         key_list = []
 
         for key, value in FMItem.__dict__.items():
-            if not key.startswith('_'):
+            if not key.startswith('_') and not key == 'sample':
                 key_list.append(key)
 
         try:
@@ -439,7 +468,8 @@ class GAE_Endpoints_API(remote.Service):
                     elif row[0] is not None:
                         value_list[key].append(ValueListCount(value=str(row[0]), count=row[1]))
 
-            attr_list = FMAttrList(  sample                               = value_list['sample'],
+            attr_list = FMAttrList(
+                # sample                               = value_list['sample'],
                                 percent_lymphocyte_infiltration      = value_list['percent_lymphocyte_infiltration'],
                                 percent_monocyte_infiltration        = value_list['percent_monocyte_infiltration'],
                                 percent_necrosis                     = value_list['percent_necrosis'],
@@ -496,6 +526,12 @@ class GAE_Endpoints_API(remote.Service):
                                 BAP1                                 = value_list['BAP1'],
                                 KRAS                                 = value_list['KRAS'],
                                 sampleType                           = value_list['sampleType'],
+                                DNAseq_data                          = value_list['DNAseq_data'],
+                                mirnPlatform                         = value_list['mirnPlatform'],
+                                cnvrPlatform                         = value_list['cnvrPlatform'],
+                                methPlatform                         = value_list['methPlatform'],
+                                gexpPlatform                         = value_list['gexpPlatform'],
+                                rppaPlatform                         = value_list['rppaPlatform'],
                                 )
             return FMSampleData(attribute_list=attr_list, total_samples=total_samples)
         except (IndexError, TypeError):
