@@ -410,12 +410,38 @@ class GAE_Endpoints_API(remote.Service):
 
             first = True
             for key, value in query_dict.items():
+                if ',' in value:
+                    value = value.replace('[', '')
+                    value = value.replace(']', '')
+                    value = value.split(',')
                 if first:
                     first = False
-                    query_str += ' %s="%s"' % (key, value)
+                    if not isinstance(value, basestring):
+                        query_str += ' %s in (' % key
+                        i = 0
+                        for val in value:
+                            if i == 0:
+                                query_str += '"' + val + '"'
+                                i = i + 1
+                            else:
+                                query_str += ',"' + val + '"'
+                        query_str += ')'
+                    else:
+                        query_str += ' %s="%s"' % (key, value)
                 else:
-                    query_str += ' and %s="%s"' % (key, value)
-
+                    if not isinstance(value, basestring):
+                        query_str += ' and %s in (' % key
+                        i = 0
+                        for val in value:
+                            if i == 0:
+                                query_str += '"' + val + '"'
+                                i = i + 1
+                            else:
+                                query_str += ',"' + val + '"'
+                        query_str += ')'
+                    else:
+                        query_str += ' and %s="%s"' % (key, value)
+        print query_str
         try:
 
             cursor = db.cursor()
